@@ -1,6 +1,6 @@
 export type VacancyStatus = 'MY_STATUS';
 
-export interface VacancyResponse {
+export interface VacancyItem {
 	id: number;
 	status: VacancyStatus;
 	date_added: string;
