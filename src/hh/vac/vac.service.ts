@@ -26,6 +26,12 @@ export class VacService {
 	}
 
 	async create(_dto: CreateVacancyListDto): Promise<CreateVacancyResponse> {
-		return { result: 'CREATED' };
+		return {
+			result: 'CREATED',
+			vacancyList: _dto.vacancyList.map(vac => ({
+				internalId: Math.floor(Math.random() * 1000),
+				...vac,
+			})),
+		};
 	}
 }

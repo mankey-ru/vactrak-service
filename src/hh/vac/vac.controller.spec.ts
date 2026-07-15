@@ -35,7 +35,7 @@ describe('VacController', () => {
 
 	it('should create vacancy', async () => {
 		await expect(
-			controller.createVacancy({ id: 1, name: 'Backend' }),
+			controller.createVacancy({ vacancyList: [{ id: 1, title: 'Backend', company: 'Yandex' }] }),
 		).resolves.toEqual({
 			result: 'CREATED',
 		});

@@ -13,9 +13,12 @@ export class TelegramNotificationInterceptor implements NestInterceptor {
 		const vacListBody: CreateVacancyListDto = req.body;
 		return next.handle().pipe(
 			tap(() => {
-				this.telegramService
-					.sendRequestNotification(vacListBody.vacancyList[0])
-					.catch((err) => console.error('Ошибка отправки в Telegram:', err));
+				vacListBody.vacancyList.forEach(async (vac) => {
+					await new Promise((res) => setTimeout(res, 2000));
+					this.telegramService
+						.sendRequestNotification(vac)
+						.catch((err) => console.error('Ошибка отправки в Telegram:', err));
+				});
 			}),
 		);
 	}
