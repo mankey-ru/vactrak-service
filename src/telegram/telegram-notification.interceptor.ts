@@ -9,13 +9,13 @@ export class TelegramNotificationInterceptor implements NestInterceptor {
 
 	intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
 		const req = context.switchToHttp().getRequest();
-		const { method, originalUrl, ip } = req;
+		const { method, originalUrl, ip, body } = req;
 
 		// Отправляем уведомление ТОЛЬКО если обработчик успешно завершился
 		return next.handle().pipe(
 			tap(() => {
 				this.telegramService
-					.sendRequestNotification(method, originalUrl, ip || 'unknown')
+					.sendRequestNotification(body)
 					.catch((err) => console.error('Ошибка отправки в Telegram:', err));
 			}),
 		);

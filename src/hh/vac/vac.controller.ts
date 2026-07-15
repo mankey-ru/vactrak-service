@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Post, Put, Delete, Param, ParseIntPipe, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, Param, ParseIntPipe, UseInterceptors } from '@nestjs/common';
 import { VacService } from './vac.service';
-import type { CreateVacancyDto, CreateVacancyResponse, VacancyItem } from './vac.types';
+import type { CreateVacancyResponse, VacancyItem } from './vac.types';
+import { CreateVacancyDto } from './dto/create-vacancy.dto';
 import { TelegramNotificationInterceptor } from '../../telegram/telegram-notification.interceptor';
-
 
 @Controller('api/hh/vac')
 export class VacController {

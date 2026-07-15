@@ -5,11 +5,9 @@ export interface VacancyItem {
 	status: VacancyStatus;
 	date_added: string;
 }
+
 /** CREATE */
-export interface CreateVacancyDto {
-	id: number;
-	name: string;
-}
+export type { CreateVacancyDto } from './dto/create-vacancy.dto';
 
 export type CreateVacancyResult = 'CREATED';
 

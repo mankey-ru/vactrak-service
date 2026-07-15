@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { VacController } from './vac.controller';
 import { VacService } from './vac.service';
+import { TelegramService } from '../../telegram/telegram.service';
+import { TelegramNotificationInterceptor } from '../../telegram/telegram-notification.interceptor';
 
 describe('VacController', () => {
 	let controller: VacController;
@@ -8,7 +10,16 @@ describe('VacController', () => {
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [VacController],
-			providers: [VacService],
+			providers: [
+				VacService,
+				TelegramNotificationInterceptor,
+				{
+					provide: TelegramService,
+					useValue: {
+						sendRequestNotification: jest.fn().mockResolvedValue(undefined),
+					},
+				},
+			],
 		}).compile();
 
 		controller = module.get<VacController>(VacController);
@@ -22,8 +33,10 @@ describe('VacController', () => {
 		});
 	});
 
-	it('should create vacancy', () => {
-		expect(controller.createVacancy({ id: 1, name: 'Backend' })).toEqual({
+	it('should create vacancy', async () => {
+		await expect(
+			controller.createVacancy({ id: 1, name: 'Backend' }),
+		).resolves.toEqual({
 			result: 'CREATED',
 		});
 	});
