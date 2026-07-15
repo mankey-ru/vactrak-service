@@ -2,6 +2,7 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nes
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { TelegramService } from './telegram.service';
+import { CreateVacancyListDto } from '../hh/vac/vac.types';
 
 @Injectable()
 export class TelegramNotificationInterceptor implements NestInterceptor {
@@ -9,13 +10,11 @@ export class TelegramNotificationInterceptor implements NestInterceptor {
 
 	intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
 		const req = context.switchToHttp().getRequest();
-		const { method, originalUrl, ip, body } = req;
-
-		// Отправляем уведомление ТОЛЬКО если обработчик успешно завершился
+		const vacListBody: CreateVacancyListDto = req.body;
 		return next.handle().pipe(
 			tap(() => {
 				this.telegramService
-					.sendRequestNotification(body)
+					.sendRequestNotification(vacListBody.vacancyList[0])
 					.catch((err) => console.error('Ошибка отправки в Telegram:', err));
 			}),
 		);

@@ -14,14 +14,14 @@ export class TelegramService {
 			this.configService.get<string>('TELEGRAM_CHAT_ID') || process.env.TELEGRAM_CHAT_ID || '';
 	}
 
-	async sendRequestNotification(body: CreateVacancyDto): Promise<void> {
+	async sendRequestNotification(vac: CreateVacancyDto): Promise<void> {
 		if (!this.botToken || !this.chatId) {
 			console.warn('Telegram не настроен: отсутствуют TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID');
 			return;
 		}
 		const date = `${new Date().toLocaleString('ru-RU', { timeZone: 'Asia/Bangkok' })} БКК`;
 		const message = `
-		🚀 [${body.id}] <a href="https://hh.ru/vacancy/${body.id}">${body.name}</a>
+		🚀 [${vac.id}] <a href="https://hh.ru/vacancy/${vac.id}">${vac.title}</a> @ ${vac.company}
 		`;
 
 		const urlApi = `https://api.telegram.org/bot${this.botToken}/sendMessage`;

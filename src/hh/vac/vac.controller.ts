@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Param, ParseIntPipe, UseInterceptors } from '@nestjs/common';
 import { VacService } from './vac.service';
 import type { CreateVacancyResponse, VacancyItem } from './vac.types';
-import { CreateVacancyDto } from './dto/create-vacancy.dto';
+import { CreateVacancyDto, CreateVacancyListDto } from './dto/create-vacancy.dto';
 import { TelegramNotificationInterceptor } from '../../telegram/telegram-notification.interceptor';
 
 @Controller('api/hh/vac')
@@ -10,7 +10,7 @@ export class VacController {
 
 	@Post()
 	@UseInterceptors(TelegramNotificationInterceptor)
-	async createVacancy(@Body() body: CreateVacancyDto): Promise<CreateVacancyResponse> {
+	async createVacancy(@Body() body: CreateVacancyListDto): Promise<CreateVacancyResponse> {
 		return this.vacService.create(body);
 	}
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { CreateVacancyDto, CreateVacancyResponse, VacancyItem } from './vac.types';
+import type { CreateVacancyDto, CreateVacancyListDto, CreateVacancyResponse, VacancyItem } from './vac.types';
 
 @Injectable()
 export class VacService {
@@ -25,7 +25,7 @@ export class VacService {
 		];
 	}
 
-	async create(_dto: CreateVacancyDto): Promise<CreateVacancyResponse> {
+	async create(_dto: CreateVacancyListDto): Promise<CreateVacancyResponse> {
 		return { result: 'CREATED' };
 	}
 }

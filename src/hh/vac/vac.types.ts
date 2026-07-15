@@ -7,7 +7,7 @@ export interface VacancyItem {
 }
 
 /** CREATE */
-export type { CreateVacancyDto } from './dto/create-vacancy.dto';
+export type { CreateVacancyDto, CreateVacancyListDto } from './dto/create-vacancy.dto';
 
 export type CreateVacancyResult = 'CREATED';
 
