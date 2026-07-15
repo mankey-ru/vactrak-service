@@ -7,7 +7,7 @@ export class AppService {
 			status: 'ok',
 			version: process.env.npm_package_version,
 			env: process.env.NODE_ENV,
-			uptime: Math.round(process.uptime()),
+			uptime: `${Math.round(process.uptime())} sec.`,
 		};
 	}
 }
