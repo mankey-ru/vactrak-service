@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, UseInterceptors } from '@nestjs/common';
 import { VacService } from './vac.service';
 import type { CreateVacancyDto, CreateVacancyResponse, VacancyResponse } from './vac.types';
 
