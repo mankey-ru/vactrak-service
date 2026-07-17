@@ -36,6 +36,10 @@ export class CreateVacancyDto {
 	@IsString()
 	@IsNotEmpty()
 	source!: 'hh' | 'habr';
+	
+	/** ключ поискового запроса */
+	@IsString()
+	search_key?: string;
 }
 
 export type FilterJson = Record<string, string | string[]>;

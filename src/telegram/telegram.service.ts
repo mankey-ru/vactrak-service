@@ -21,8 +21,8 @@ export class TelegramService {
 		}
 		const date = `${new Date().toLocaleString('ru-RU', { timeZone: 'Asia/Bangkok' })} БКК`;		
 
-		const searchCode = vac.filter_json?.vactrak_code;
-		const searchCodeExt = searchCode ? `<b>${searchCode}</b> ► ` : ''; // 【】
+		const searchKey = vac.search_key;
+		const searchCodeExt = searchKey ? `<b>${searchKey}</b> ► ` : ''; // 【】
 
 		const message = `
 		${searchCodeExt} <a href="https://hh.ru/vacancy/${vac.id_ext}">${vac.title}</a> @ ${vac.company}

@@ -27,9 +27,9 @@ export class Vacancy {
 	/** источник */
 	source!: 'hh' | 'habr';
 
-	@Column({ type: 'varchar', nullable: false, default: '<none>' })
-	/** код поиска */
-	search_code!: string;
+	@Column({ type: 'varchar', nullable: true })
+	/** ключ поискового запроса */
+	search_key?: string;
 
 	@CreateDateColumn({
 		type: 'timestamp',
