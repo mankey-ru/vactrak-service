@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsNotEmpty, IsString, Min, IsArray, ValidateNested } from 'class-validator';
+import { IsInt, IsNotEmpty, IsString, Min, IsArray, ValidateNested, IsNotEmptyObject } from 'class-validator';
 
 
 export class CreateVacancyListDto {
@@ -16,7 +16,7 @@ export class CreateVacancyDto {
 	@IsInt()
 	@Min(1)
 	/** vacancy id на хедхантере */
-	id!: number;
+	id_ext!: string;
 
 	@IsString()
 	@IsNotEmpty()
@@ -27,4 +27,15 @@ export class CreateVacancyDto {
 	@IsNotEmpty()
 	/** имя компании */
 	company!: string;
+
+	@IsNotEmptyObject()
+	/** фильтр вакансий */
+	filter_json!: FilterJson;
+	
+	/** источник */
+	@IsString()
+	@IsNotEmpty()
+	source!: 'hh' | 'habr';
 }
+
+export type FilterJson = Record<string, string | string[]>;

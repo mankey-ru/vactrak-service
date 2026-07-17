@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { VacController } from './vac.controller';
-import { VacService } from './vac.service';
-import { TelegramService } from '../../telegram/telegram.service';
-import { TelegramNotificationInterceptor } from '../../telegram/telegram-notification.interceptor';
+import { VacController } from '@hhvac/vac.controller';
+import { VacService } from '@hhvac/vac.service';
+import { TelegramService } from '@/telegram/telegram.service';
+import { TelegramNotificationInterceptor } from '@/telegram/telegram-notification.interceptor';
 
 describe('VacController', () => {
 	let controller: VacController;
@@ -35,7 +35,7 @@ describe('VacController', () => {
 
 	it('should create vacancy', async () => {
 		await expect(
-			controller.createVacancy({ vacancyList: [{ id: 1, title: 'Backend', company: 'Yandex' }] }),
+			controller.createVacancy({ vacancyList: [{ id_ext: '123', title: 'Backend', company: 'Yandex', filter_json: {a: '1'}, source: 'hh' }] }),
 		).resolves.toEqual({
 			result: 'CREATED',
 		});

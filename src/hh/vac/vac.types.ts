@@ -8,11 +8,12 @@ export interface VacancyItem {
 
 /** CREATE */
 import type { CreateVacancyDto } from './dto/create-vacancy.dto';
-export type { CreateVacancyDto, CreateVacancyListDto } from './dto/create-vacancy.dto';
+import { Vacancy } from '@hhvac/entities/vacancy.entity';
+export type { CreateVacancyDto, CreateVacancyListDto, FilterJson } from './dto/create-vacancy.dto';
 
 export type CreateVacancyResult = 'CREATED';
 
-type CreateVacancyResponseListItem = CreateVacancyDto & { internalId: number };
+type CreateVacancyResponseListItem = Pick<Vacancy, 'id' | 'id_ext' | 'title'>;
 
 export interface CreateVacancyResponse {
 	result: CreateVacancyResult;

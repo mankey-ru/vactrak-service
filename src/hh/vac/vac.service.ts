@@ -1,8 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import type { CreateVacancyDto, CreateVacancyListDto, CreateVacancyResponse, VacancyItem } from './vac.types';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import type {
+	CreateVacancyDto,
+	CreateVacancyListDto,
+	CreateVacancyResponse,
+	VacancyItem,
+} from './vac.types';
+import { Vacancy } from '@hhvac/entities/vacancy.entity';
 
 @Injectable()
 export class VacService {
+	constructor(
+		@InjectRepository(Vacancy)
+		private readonly vacancyRepository: Repository<Vacancy>,
+	) {}
 	getById(vacancyId: number): VacancyItem {
 		return {
 			id: vacancyId,
@@ -25,13 +37,22 @@ export class VacService {
 		];
 	}
 
-	async create(_dto: CreateVacancyListDto): Promise<CreateVacancyResponse> {
+	async create(vacListDto: CreateVacancyListDto): Promise<CreateVacancyResponse> {
+		const vacancies = vacListDto.vacancyList.map((vac) => {
+			return {
+				date_fetched: new Date(),
+				...vac,
+			};
+		});
+		const createResult = this.vacancyRepository.create(vacancies);
+		const saveResult = await this.vacancyRepository.save(createResult);
+		// console.log(saveResult);
 		return {
 			result: 'CREATED',
-			vacancyList: _dto.vacancyList.map(vac => ({
-				internalId: Math.floor(Math.random() * 1000),
-				...vac,
-			})),
+			vacancyList: saveResult.map((vac) => {
+				const { id, id_ext, title } = vac;
+				return { id, id_ext, title };
+			}),
 		};
 	}
 }

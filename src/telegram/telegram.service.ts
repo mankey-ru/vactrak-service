@@ -21,7 +21,7 @@ export class TelegramService {
 		}
 		const date = `${new Date().toLocaleString('ru-RU', { timeZone: 'Asia/Bangkok' })} БКК`;
 		const message = `
-		🚀 [${vac.id}] <a href="https://hh.ru/vacancy/${vac.id}">${vac.title}</a> @ ${vac.company}
+		🚀 <a href="https://hh.ru/vacancy/${vac.id_ext}">${vac.title}</a> @ ${vac.company}
 		`;
 
 		const urlApi = `https://api.telegram.org/bot${this.botToken}/sendMessage`;
