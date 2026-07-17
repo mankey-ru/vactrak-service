@@ -27,6 +27,10 @@ export class Vacancy {
 	/** источник */
 	source!: 'hh' | 'habr';
 
+	@Column({ type: 'varchar', nullable: false, default: '<none>' })
+	/** код поиска */
+	search_code!: string;
+
 	@CreateDateColumn({
 		type: 'timestamp',
 		name: 'date_fetched',

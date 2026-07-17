@@ -19,9 +19,13 @@ export class TelegramService {
 			console.warn('Telegram не настроен: отсутствуют TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID');
 			return;
 		}
-		const date = `${new Date().toLocaleString('ru-RU', { timeZone: 'Asia/Bangkok' })} БКК`;
+		const date = `${new Date().toLocaleString('ru-RU', { timeZone: 'Asia/Bangkok' })} БКК`;		
+
+		const searchCode = vac.filter_json?.vactrak_code;
+		const searchCodeExt = searchCode ? `<b>${searchCode}</b> ► ` : ''; // 【】
+
 		const message = `
-		🚀 <a href="https://hh.ru/vacancy/${vac.id_ext}">${vac.title}</a> @ ${vac.company}
+		${searchCodeExt} <a href="https://hh.ru/vacancy/${vac.id_ext}">${vac.title}</a> @ ${vac.company}
 		`;
 
 		const urlApi = `https://api.telegram.org/bot${this.botToken}/sendMessage`;
