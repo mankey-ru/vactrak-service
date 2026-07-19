@@ -16,7 +16,8 @@ describe('AppController', () => {
 
 	describe('root', () => {
 		it('should return "Hello World!"', () => {
-			expect(appController.getHello()).toBe('Hello World!');
+			expect(appController.getHello()).toHaveProperty('status', 'ok');
+			// {"env": "test", "status": "ok", "uptime": "12 sec.", "version": "1.0.2"}
 		});
 	});
 });

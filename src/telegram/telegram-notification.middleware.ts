@@ -1,7 +1,7 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { TelegramService } from './telegram.service';
-import { CreateVacancyDto } from '../hh/vac/vac.types';
+import type { CreateVacancyDto } from '@/vacancy/vacancy.types';
 
 @Injectable()
 export class TelegramNotificationMiddleware implements NestMiddleware {

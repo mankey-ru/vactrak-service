@@ -1,6 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { CreateVacancyResponse, VacancyItem, CreateVacancyDto } from './../hh/vac/vac.types';
+import type {
+	CreateVacancyDto,
+	VacancySource,
+} from '@/vacancy/vacancy.types';
+
+function vacancyUrl(source: VacancySource, id_ext: string): string {
+	switch (source) {
+		case 'hh':
+			return `https://hh.ru/vacancy/${id_ext}`;
+		case 'habr':
+			// stub until Habr adapter exists
+			return `https://career.habr.com/vacancies/${id_ext}`;
+		default:
+			return `#${id_ext}`;
+	}
+}
 
 @Injectable()
 export class TelegramService {
@@ -23,9 +38,10 @@ export class TelegramService {
 
 		const searchKey = vac.search_key;
 		const searchCodeExt = searchKey ? `<b>${searchKey}</b> ► ` : ''; // 【】
+		const link = vacancyUrl(vac.source, vac.id_ext);
 
 		const message = `
-		${searchCodeExt} <a href="https://hh.ru/vacancy/${vac.id_ext}">${vac.title}</a> @ ${vac.company}
+		${searchCodeExt} <a href="${link}">${vac.title}</a> @ ${vac.company}
 		`;
 
 		const urlApi = `https://api.telegram.org/bot${this.botToken}/sendMessage`;

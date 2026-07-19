@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
-import type { FilterJson } from '@hhvac/vac.types';
+import type { FilterJson, VacancySource } from '../vacancy.types';
 
 @Entity('vacancy')
 export class Vacancy {
@@ -8,7 +8,7 @@ export class Vacancy {
 	id!: string; // bigint лучше хранить как string в JS/TS
 
 	@Column({ type: 'varchar', nullable: false })
-	/** это id на хедхантере */
+	/** внешний id на источнике */
 	id_ext!: string;
 
 	@Column({ type: 'varchar', nullable: false })
@@ -25,7 +25,7 @@ export class Vacancy {
 
 	@Column({ type: 'varchar', nullable: false })
 	/** источник */
-	source!: 'hh' | 'habr';
+	source!: VacancySource;
 
 	@Column({ type: 'varchar', nullable: true })
 	/** ключ поискового запроса */

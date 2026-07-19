@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 import { HhModule } from '@/hh/hh.module';
+import { VacancyModule } from '@/vacancy/vacancy.module';
 import { TelegramModule } from '@/telegram/telegram.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -12,7 +13,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 		TypeOrmModule.forRootAsync({
 			imports: [ConfigModule],
 			inject: [ConfigService],
-			useFactory: (configService: ConfigService) => ({				
+			useFactory: (configService: ConfigService) => ({
 				// TODO! добавить manualInitialization чтобы сервис не падал при отсутствии БД
 				type: 'postgres' as const,
 				host: configService.get<string>('POSTGRES_HOST'),
@@ -27,6 +28,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 			}),
 		}),
 		TelegramModule,
+		VacancyModule,
 		HhModule,
 	],
 	controllers: [AppController],

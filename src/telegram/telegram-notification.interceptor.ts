@@ -2,7 +2,7 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nes
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { TelegramService } from './telegram.service';
-import { CreateVacancyListDto } from '../hh/vac/vac.types';
+import type { CreateVacancyListDto } from '@/vacancy/vacancy.types';
 
 @Injectable()
 export class TelegramNotificationInterceptor implements NestInterceptor {

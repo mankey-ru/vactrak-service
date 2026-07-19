@@ -24,7 +24,7 @@
     "types": ["jest"],
     "paths": {
       "@/*": ["./src/*"],
-      "@hhvac/*": ["./src/hh/vac/*"]
+      "@vacancy/*": ["./src/vacancy/*"]
     }
   }
 }

@@ -1,5 +1,7 @@
 export type VacancyStatus = 'MY_STATUS';
 
+export type VacancySource = 'hh' | 'habr';
+
 export interface VacancyItem {
 	id: number;
 	status: VacancyStatus;
@@ -8,8 +10,12 @@ export interface VacancyItem {
 
 /** CREATE */
 import type { CreateVacancyDto } from './dto/create-vacancy.dto';
-import { Vacancy } from '@hhvac/entities/vacancy.entity';
-export type { CreateVacancyDto, CreateVacancyListDto, FilterJson } from './dto/create-vacancy.dto';
+import { Vacancy } from './entities/vacancy.entity';
+export type {
+	CreateVacancyDto,
+	CreateVacancyListDto,
+	FilterJson,
+} from './dto/create-vacancy.dto';
 
 export type CreateVacancyResult = 'CREATED';
 

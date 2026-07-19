@@ -1,21 +1,17 @@
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
-import { VacController } from '@hhvac/vac.controller';
-import { VacService } from '@hhvac/vac.service';
+import { HhController } from './hh.controller';
+import { VacancyModule } from '@/vacancy/vacancy.module';
 import { TelegramModule } from '@/telegram/telegram.module';
 import { HhCorsMiddleware } from '@/hh/hh-cors.middleware';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Vacancy } from '@hhvac/entities/vacancy.entity';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([Vacancy]), TelegramModule],
-	controllers: [VacController],
-	providers: [VacService],
-	exports: [VacService],
+	imports: [VacancyModule, TelegramModule],
+	controllers: [HhController],
 })
 export class HhModule implements NestModule {
 	configure(consumer: MiddlewareConsumer) {
 		// Must use RequestMethod.ALL + explicit paths so OPTIONS preflight
-		// is covered. forRoutes(VacController) only matches registered
+		// is covered. forRoutes(HhController) only matches registered
 		// GET/POST handlers, so browsers never see CORS headers.
 		consumer
 			.apply(HhCorsMiddleware)

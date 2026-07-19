@@ -2,19 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import type {
-	CreateVacancyDto,
 	CreateVacancyListDto,
 	CreateVacancyResponse,
 	VacancyItem,
-} from './vac.types';
-import { Vacancy } from '@hhvac/entities/vacancy.entity';
+} from './vacancy.types';
+import { Vacancy } from './entities/vacancy.entity';
 
 @Injectable()
-export class VacService {
+export class VacancyService {
 	constructor(
 		@InjectRepository(Vacancy)
 		private readonly vacancyRepository: Repository<Vacancy>,
 	) {}
+
 	getById(vacancyId: number): VacancyItem {
 		return {
 			id: vacancyId,
@@ -22,6 +22,7 @@ export class VacService {
 			date_added: '2026-07-14T22:00:48.228Z',
 		};
 	}
+
 	getAll(): VacancyItem[] {
 		return [
 			{
@@ -46,7 +47,6 @@ export class VacService {
 		});
 		const createResult = this.vacancyRepository.create(vacancies);
 		const saveResult = await this.vacancyRepository.save(createResult);
-		// console.log(saveResult);
 		return {
 			result: 'CREATED',
 			vacancyList: saveResult.map((vac) => {
