@@ -11,11 +11,7 @@ export interface VacancyItem {
 /** CREATE */
 import type { CreateVacancyDto } from './dto/create-vacancy.dto';
 import { Vacancy } from './entities/vacancy.entity';
-export type {
-	CreateVacancyDto,
-	CreateVacancyListDto,
-	FilterJson,
-} from './dto/create-vacancy.dto';
+export type { CreateVacancyDto, CreateVacancyListDto, FilterJson } from './dto/create-vacancy.dto';
 
 export type CreateVacancyResult = 'CREATED';
 

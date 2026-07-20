@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 const ALLOWED_ORIGINS = ['https://hh.ru', 'https://hh.uz', 'https://rabota.by'];
 
 @Injectable()
-export class HhCorsMiddleware implements NestMiddleware {
+export class VacancyMiddleware implements NestMiddleware {
 	use(req: Request, res: Response, next: NextFunction) {
 		const origin = req.headers.origin;
 		const allowAll = true;
@@ -25,14 +25,10 @@ export class HhCorsMiddleware implements NestMiddleware {
 			res.header('Vary', 'Origin');
 		}
 
-		res.header(
-			'Access-Control-Allow-Methods',
-			'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-		);
+		res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
 		res.header(
 			'Access-Control-Allow-Headers',
-			req.headers['access-control-request-headers'] ||
-				'Content-Type, Authorization',
+			req.headers['access-control-request-headers'] || 'Content-Type, Authorization',
 		);
 
 		if (req.method === 'OPTIONS') {

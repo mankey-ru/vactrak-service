@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type {
-	CreateVacancyDto,
-	VacancySource,
-} from '@/vacancy/vacancy.types';
+import type { CreateVacancyDto, VacancySource } from '@/vacancy/vacancy.types';
 
 function vacancyUrl(source: VacancySource, id_ext: string): string {
 	switch (source) {
@@ -24,17 +21,23 @@ export class TelegramService {
 
 	constructor(private readonly configService: ConfigService) {
 		this.botToken =
-			this.configService.get<string>('TELEGRAM_BOT_TOKEN') || process.env.TELEGRAM_BOT_TOKEN || '';
+			this.configService.get<string>('TELEGRAM_BOT_TOKEN') ||
+			process.env.TELEGRAM_BOT_TOKEN ||
+			'';
 		this.chatId =
-			this.configService.get<string>('TELEGRAM_CHAT_ID') || process.env.TELEGRAM_CHAT_ID || '';
+			this.configService.get<string>('TELEGRAM_CHAT_ID') ||
+			process.env.TELEGRAM_CHAT_ID ||
+			'';
 	}
 
 	async sendRequestNotification(vac: CreateVacancyDto): Promise<void> {
 		if (!this.botToken || !this.chatId) {
-			console.warn('Telegram не настроен: отсутствуют TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID');
+			console.warn(
+				'Telegram не настроен: отсутствуют TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID',
+			);
 			return;
 		}
-		const date = `${new Date().toLocaleString('ru-RU', { timeZone: 'Asia/Bangkok' })} БКК`;		
+		const date = `${new Date().toLocaleString('ru-RU', { timeZone: 'Asia/Bangkok' })} БКК`;
 
 		const searchKey = vac.search_key;
 		const searchCodeExt = searchKey ? `<b>${searchKey}</b> ► ` : ''; // 【】
@@ -70,7 +73,6 @@ export class TelegramService {
 		return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 	}
 }
-
 
 /*
  * === HTML-форматирование сообщений Telegram ===

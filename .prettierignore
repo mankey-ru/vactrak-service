@@ -1,0 +1,10 @@
+# build / deps / coverage
+node_modules
+dist
+coverage
+*.tsbuildinfo
+
+# env & locks (leave as-is)
+package-lock.json
+.env
+.env.*

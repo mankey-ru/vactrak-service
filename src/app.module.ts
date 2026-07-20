@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
-import { HhModule } from '@/hh/hh.module';
 import { VacancyModule } from '@/vacancy/vacancy.module';
 import { TelegramModule } from '@/telegram/telegram.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -29,7 +28,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 		}),
 		TelegramModule,
 		VacancyModule,
-		HhModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
