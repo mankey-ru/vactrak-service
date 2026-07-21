@@ -7,7 +7,6 @@ function vacancyUrl(source: VacancySource, id_ext: string): string {
 		case 'hh':
 			return `https://hh.ru/vacancy/${id_ext}`;
 		case 'habr':
-			// stub until Habr adapter exists
 			return `https://career.habr.com/vacancies/${id_ext}`;
 		default:
 			return `#${id_ext}`;
@@ -44,7 +43,7 @@ export class TelegramService {
 		const link = vacancyUrl(vac.source, vac.id_ext);
 
 		const message = `
-		${searchCodeExt} <a href="${link}">${vac.title}</a> @ ${vac.company}
+		${searchCodeExt} <a href="${link}">${this.escapeHtml(vac.title)}</a> @ ${this.escapeHtml(vac.company)}
 		`;
 
 		const urlApi = `https://api.telegram.org/bot${this.botToken}/sendMessage`;

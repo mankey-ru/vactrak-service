@@ -12,7 +12,7 @@ export class AppService {
 	}
 }
 
-function formatSeconds(totalSeconds) {
+function formatSeconds(totalSeconds: number): string {
 	// Ensure we deal with a positive integer
 	const secs = Math.abs(Math.floor(totalSeconds));
 
