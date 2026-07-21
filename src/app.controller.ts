@@ -9,4 +9,9 @@ export class AppController {
 	getInfo (): Record<string, any> {
 		return this.appService.getInfo();
 	}
+
+	@Get('/')
+	getStart (): string {
+		return this.appService.getStartPageContent();
+	}
 }

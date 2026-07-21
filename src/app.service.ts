@@ -10,6 +10,29 @@ export class AppService {
 			uptime: formatSeconds(process.uptime()),
 		};
 	}
+
+	getStartPageContent(): string {
+		return `
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Start page</title>
+	<style>
+		body {
+			font-family: sans-serif;
+			max-width: 900px;
+			margin: 0 auto;
+			padding: 20px;
+			background-color: darkgray;
+		}
+	</style>
+</head>
+<body>
+	<h1>vactrak FTW!</h1>
+</body>
+</html>
+		`.trim();
+	}
 }
 
 function formatSeconds(totalSeconds: number): string {
