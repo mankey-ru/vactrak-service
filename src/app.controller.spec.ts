@@ -14,9 +14,9 @@ describe('AppController', () => {
 		appController = app.get<AppController>(AppController);
 	});
 
-	describe('root', () => {
-		it('should return status "ok"', () => {
-			expect(appController.getInfoCntrl()).toHaveProperty('status', 'ok');
+	describe('/info', () => {
+		it('should return version', () => {
+			expect(appController.getInfo ()).toHaveProperty('version');
 			// {"env": "test", "status": "ok", "uptime": "12 sec.", "version": "1.0.2"}
 		});
 	});

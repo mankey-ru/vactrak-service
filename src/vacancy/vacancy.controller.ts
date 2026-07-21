@@ -5,7 +5,7 @@ import { CreateVacancyListDto } from './dto/create-vacancy.dto';
 import { GetAllVacanciesQueryDto } from './dto/get-all-vacancies.dto';
 import { Vacancy } from './entities/vacancy.entity';
 
-@Controller('api/vac')
+@Controller('/api/vac')
 export class VacancyController {
 	constructor(private readonly vacancyService: VacancyService) {}
 
