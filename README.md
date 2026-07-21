@@ -7,10 +7,11 @@ Nowadays many jobs immediately got many applicants and job sites provide only da
 
 ## Basic usage (client-side only)
 1. Install [Tampermonkey](https://www.tampermonkey.net/) or any userscript extension for your browser.
-1. Install [userscript for HeadHunter/Habr career](https://github.com/mankey-ru/userscripts/blob/main/dist/vactrak.user.js).
-1. Open HeadHunter or Habr Career and search with your exact conditions
-1. Add to search url params `&use_vactrak=yes&vactrak_search_key=YOUR_OPTIONAL_SEARCH_NAME`
-    - `vactrak_search_key` is just a convenient label, use different keys for each search if you have several with different criteria. E.g. `node` and `vue`.
+1. Install the [userscript](https://github.com/mankey-ru/userscripts#vactrak-vacancy-tracker) (now supports [HeadHunter](https://hh.ru) and [Habr Career](https://career.habr.com)).
+1. Open supported job site and search with your exact conditions (note: HH supports [advanced](https://hh.ru/article/25295) [queries](https://hh.ru/article/1175))
+1. Manually add url params:
+    - `&use_vactrak=yes` to enable vactrak userscript
+    - `&vactrak_search_key=YOUR_OPTIONAL_SEARCH_NAME` (optional) to have a convenient label when getting notifications. E.g. `node` and `vue`. Important: use different keys for each search criteria set. 
 
 #### Result
 It reloads the page each ~2m and makes **clickable system notifications** about new vacancies. 
