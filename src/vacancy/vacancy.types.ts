@@ -1,12 +1,8 @@
-export type VacancyStatus = 'MY_STATUS';
+export type VacancyStatus = 'new' | 'archived';
+
+export const VACANCY_STATUSES = ['new', 'archived'] as const satisfies readonly VacancyStatus[];
 
 export type VacancySource = 'hh' | 'habr';
-
-export interface VacancyItem {
-	id: number;
-	status: VacancyStatus;
-	date_added: string;
-}
 
 /** CREATE */
 import type { CreateVacancyDto } from './dto/create-vacancy.dto';
@@ -15,7 +11,7 @@ export type { CreateVacancyDto, CreateVacancyListDto, FilterJson } from './dto/c
 
 export type CreateVacancyResult = 'CREATED';
 
-type CreateVacancyResponseListItem = Pick<Vacancy, 'id' | 'id_ext' | 'title'>;
+type CreateVacancyResponseListItem = Pick<Vacancy, 'id' | 'id_ext' | 'title' | 'status'>;
 
 export interface CreateVacancyResponse {
 	result: CreateVacancyResult;
@@ -23,5 +19,3 @@ export interface CreateVacancyResponse {
 }
 
 /** UPDATE */
-
-/** DELETE */

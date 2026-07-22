@@ -29,14 +29,21 @@ export class TelegramService {
 			'';
 	}
 
-	async sendRequestNotification(vac: CreateVacancyDto): Promise<void> {
-		if (!this.botToken || !this.chatId) {
+	/**
+	 * @param vac vacancy payload
+	 * @param chatIdOverride owner telegram id (multi-user). Falls back to TELEGRAM_CHAT_ID.
+	 */
+	async sendRequestNotification(
+		vac: CreateVacancyDto,
+		chatIdOverride?: string,
+	): Promise<void> {
+		const chatId = chatIdOverride || this.chatId;
+		if (!this.botToken || !chatId) {
 			console.warn(
-				'Telegram не настроен: отсутствуют TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID',
+				'Telegram не настроен: отсутствуют TELEGRAM_BOT_TOKEN или chat id получателя',
 			);
 			return;
 		}
-		const date = `${new Date().toLocaleString('ru-RU', { timeZone: 'Asia/Bangkok' })} БКК`;
 
 		const searchKey = vac.search_key;
 		const searchCodeExt = searchKey ? `<b>${searchKey}</b> ► ` : ''; // 【】
@@ -53,7 +60,7 @@ export class TelegramService {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
-					chat_id: this.chatId,
+					chat_id: chatId,
 					text: message.trim(),
 					parse_mode: 'HTML',
 				}),

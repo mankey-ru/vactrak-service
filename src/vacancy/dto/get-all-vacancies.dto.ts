@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional, Min } from 'class-validator';
-import type { VacancySource } from '../vacancy.types';
+import type { VacancySource, VacancyStatus } from '../vacancy.types';
+import { VACANCY_STATUSES } from '../vacancy.types';
 
 /** allowed page sizes for GET all vacancies */
 export const VACANCY_PAGE_SIZES = [10, 25, 50] as const;
@@ -25,4 +26,9 @@ export class GetAllVacanciesQueryDto {
 	@IsIn(VACANCY_SOURCES)
 	/** optional filter by vacancy source */
 	source?: VacancySource;
+
+	@IsOptional()
+	@IsIn(VACANCY_STATUSES)
+	/** optional filter by status */
+	status?: VacancyStatus;
 }

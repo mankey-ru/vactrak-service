@@ -6,9 +6,11 @@ import type {
 	CreateVacancyListDto,
 	CreateVacancyResponse,
 	VacancySource,
+	VacancyStatus,
 } from './vacancy.types';
 import { Vacancy } from './entities/vacancy.entity';
 import { TelegramService } from '@/telegram/telegram.service';
+import type { AuthUser } from '@/auth/auth.types';
 
 @Injectable()
 export class VacancyService {
@@ -18,9 +20,10 @@ export class VacancyService {
 		private readonly telegramService: TelegramService,
 	) {}
 
-	async getById(vacancyId: number): Promise<Vacancy> {
+	async getById(vacancyId: number, userId: string): Promise<Vacancy> {
 		const vacancy = await this.vacancyRepository.findOneBy({
 			id: String(vacancyId),
+			userId,
 		});
 		if (!vacancy) {
 			throw new NotFoundException(`Vacancy ${vacancyId} not found`);
@@ -29,46 +32,72 @@ export class VacancyService {
 	}
 
 	/**
-	 * Returns a page of vacancies from public.vacancy.
-	 * @param pageSize N — items per page (25 | 50 | 100)
-	 * @param page M — 1-based page number
-	 * @param source optional filter by source (hh | habr)
+	 * Returns a page of vacancies for the current user only (row-level ownership).
 	 */
 	async getAllVacancies(
+		userId: string,
 		pageSize: number,
 		page: number,
 		source?: VacancySource,
+		status?: VacancyStatus,
 	): Promise<Vacancy[]> {
 		const offset = (page - 1) * pageSize;
+		const where: {
+			userId: string;
+			source?: VacancySource;
+			status?: VacancyStatus;
+		} = { userId };
+		if (source) {
+			where.source = source;
+		}
+		if (status) {
+			where.status = status;
+		}
 		return this.vacancyRepository.find({
-			where: source ? { source } : undefined,
+			where,
 			skip: offset,
 			take: pageSize,
 			order: { id: 'DESC' },
 		});
 	}
 
+	async updateStatus(
+		vacancyId: number,
+		userId: string,
+		status: VacancyStatus,
+	): Promise<Vacancy> {
+		const vacancy = await this.getById(vacancyId, userId);
+		vacancy.status = status;
+		return this.vacancyRepository.save(vacancy);
+	}
+
 	/**
-	 * Creates only vacancies that do not already exist.
-	 * Uniqueness key: (id_ext, source, title).
+	 * Creates only vacancies that do not already exist for this user.
+	 * Uniqueness key: (user_id, id_ext, source, title).
 	 */
-	async create(vacListDto: CreateVacancyListDto): Promise<CreateVacancyResponse> {
+	async create(vacListDto: CreateVacancyListDto, user: AuthUser): Promise<CreateVacancyResponse> {
 		const incoming = vacListDto.vacancyList.map((vac) => ({
 			...vac,
 			id_ext: String(vac.id_ext),
 			date_fetched: new Date(),
+			userId: user.id,
+			status: 'new' as const,
 		}));
 
-		const vacancyKey = (v: { id_ext: string; source: string; title: string }) =>
-			`${v.id_ext}\0${v.source}\0${v.title}`;
+		const vacancyKey = (v: {
+			userId: string;
+			id_ext: string;
+			source: string;
+			title: string;
+		}) => `${v.userId}\0${v.id_ext}\0${v.source}\0${v.title}`;
 
 		const existing = await this.vacancyRepository.find({
 			where: incoming.map((v) => ({
+				userId: v.userId,
 				id_ext: v.id_ext,
 				source: v.source,
 				title: v.title,
 			})),
-			// select: ['id_ext', 'source', 'title'],
 		});
 		const existingKeys = new Set(existing.map(vacancyKey));
 
@@ -94,25 +123,26 @@ export class VacancyService {
 			chunk: 10,
 		});
 
-		// Notify only for new vacancies (non-blocking; keep response fast)
-		this.notifyNewVacancies(toCreate);
+		this.notifyNewVacancies(toCreate, user.telegramId);
 
 		return {
 			result: 'CREATED',
 			vacancyList: saveResult.map((vac) => {
-				const { id, id_ext, title } = vac;
-				return { id, id_ext, title };
+				const { id, id_ext, title, status } = vac;
+				return { id, id_ext, title, status };
 			}),
 		};
 	}
 
 	/** Fire-and-forget Telegram notifications for newly created vacancies. */
-	private notifyNewVacancies(vacancies: Array<CreateVacancyDto & { id_ext: string }>): void {
+	private notifyNewVacancies(
+		vacancies: Array<CreateVacancyDto & { id_ext: string }>,
+		telegramChatId: string,
+	): void {
 		void (async () => {
 			for (const vac of vacancies) {
 				try {
-					await this.telegramService.sendRequestNotification(vac);
-					// light spacing to avoid Telegram rate limits
+					await this.telegramService.sendRequestNotification(vac, telegramChatId);
 					await new Promise((resolve) => setTimeout(resolve, 2000));
 				} catch (err) {
 					console.error('Ошибка отправки в Telegram:', err);

@@ -5,9 +5,10 @@ import { VacancyService } from './vacancy.service';
 import { VacancyController } from './vacancy.controller';
 import { VacancyMiddleware } from './vacancy.middleware';
 import { TelegramModule } from '@/telegram/telegram.module';
+import { AuthModule } from '@/auth/auth.module';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([Vacancy]), TelegramModule],
+	imports: [TypeOrmModule.forFeature([Vacancy]), TelegramModule, AuthModule],
 	controllers: [VacancyController],
 	providers: [VacancyService],
 	exports: [VacancyService, TypeOrmModule],
@@ -22,6 +23,8 @@ export class VacancyModule implements NestModule {
 			.forRoutes(
 				{ path: 'api/vac', method: RequestMethod.ALL },
 				{ path: 'api/vac/*path', method: RequestMethod.ALL },
+				{ path: 'api/auth', method: RequestMethod.ALL },
+				{ path: 'api/auth/*path', method: RequestMethod.ALL },
 			);
 	}
 }

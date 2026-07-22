@@ -2,17 +2,27 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { AppModule } from '../src/app.module';
 import { Vacancy } from '../src/vacancy/entities/vacancy.entity';
+import { User } from '../src/user/entities/user.entity';
 import { TelegramService } from '../src/telegram/telegram.service';
 
 describe('Vacancy POST (e2e)', () => {
 	let app: INestApplication;
 	let vacancyRepo: Repository<Vacancy>;
+	let userRepo: Repository<User>;
+	let jwtService: JwtService;
 	let createdId: string | undefined;
+	let testUserId: string | undefined;
+	let accessToken: string;
 
 	beforeAll(async () => {
+		if (!process.env.JWT_SECRET) {
+			process.env.JWT_SECRET = 'test-jwt-secret-for-e2e';
+		}
+
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AppModule],
 		})
@@ -33,16 +43,43 @@ describe('Vacancy POST (e2e)', () => {
 		await app.init();
 
 		vacancyRepo = moduleFixture.get<Repository<Vacancy>>(getRepositoryToken(Vacancy));
+		userRepo = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
+		jwtService = moduleFixture.get(JwtService);
+
+		const telegramId = `e2e-${Date.now()}`;
+		const user = await userRepo.save(
+			userRepo.create({
+				telegramId,
+				firstName: 'E2E',
+				username: 'e2e_user',
+			}),
+		);
+		testUserId = user.id;
+		accessToken = await jwtService.signAsync({
+			sub: user.id,
+			telegramId: String(user.telegramId),
+		});
 	});
 
 	afterAll(async () => {
 		if (createdId) {
 			await vacancyRepo.delete(createdId);
 		}
+		if (testUserId) {
+			await vacancyRepo.delete({ userId: testUserId });
+			await userRepo.delete(testUserId);
+		}
 		await app.close();
 	});
 
-	it('POST /api/vac persists vacancy fields in the database', async () => {
+	it('rejects unauthenticated POST /api/vac', async () => {
+		await request(app.getHttpServer())
+			.post('/api/vac')
+			.send({ vacancyList: [] })
+			.expect(401);
+	});
+
+	it('POST /api/vac persists vacancy fields for the authenticated user', async () => {
 		const idExt = String(Date.now());
 		const payload = {
 			vacancyList: [
@@ -61,7 +98,11 @@ describe('Vacancy POST (e2e)', () => {
 			],
 		};
 
-		const res = await request(app.getHttpServer()).post('/api/vac').send(payload).expect(201);
+		const res = await request(app.getHttpServer())
+			.post('/api/vac')
+			.set('Authorization', `Bearer ${accessToken}`)
+			.send(payload)
+			.expect(201);
 
 		expect(res.body).toMatchObject({
 			result: 'CREATED',
@@ -69,6 +110,7 @@ describe('Vacancy POST (e2e)', () => {
 				{
 					id_ext: expect.anything(),
 					title: 'Integration Test Backend',
+					status: 'new',
 				},
 			],
 		});
@@ -81,10 +123,12 @@ describe('Vacancy POST (e2e)', () => {
 		expect(row).not.toBeNull();
 
 		expect(row!.id).toBe(createdId);
+		expect(String(row!.userId)).toBe(String(testUserId));
 		expect(String(row!.id_ext)).toBe(idExt);
 		expect(row!.title).toBe('Integration Test Backend');
 		expect(row!.company).toBe('TestCo');
 		expect(row!.source).toBe('hh');
+		expect(row!.status).toBe('new');
 		expect(row!.search_key).toBe('itest-node');
 		expect(row!.filter_json).toEqual({
 			text: 'node',
@@ -93,5 +137,20 @@ describe('Vacancy POST (e2e)', () => {
 		});
 		expect(row!.date_fetched).toBeInstanceOf(Date);
 		expect(Number.isNaN(row!.date_fetched.getTime())).toBe(false);
+	});
+
+	it('PATCH /api/vac/:id/status updates status for owner only', async () => {
+		expect(createdId).toBeDefined();
+
+		const res = await request(app.getHttpServer())
+			.patch(`/api/vac/${createdId}/status`)
+			.set('Authorization', `Bearer ${accessToken}`)
+			.send({ status: 'archived' })
+			.expect(200);
+
+		expect(res.body.status).toBe('archived');
+
+		const row = await vacancyRepo.findOneBy({ id: createdId });
+		expect(row!.status).toBe('archived');
 	});
 });

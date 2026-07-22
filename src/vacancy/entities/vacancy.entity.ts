@@ -1,11 +1,28 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
-import type { FilterJson, VacancySource } from '../vacancy.types';
+import {
+	Entity,
+	PrimaryGeneratedColumn,
+	Column,
+	CreateDateColumn,
+	ManyToOne,
+	JoinColumn,
+	Index,
+} from 'typeorm';
+import type { FilterJson, VacancySource, VacancyStatus } from '../vacancy.types';
+import { User } from '@/user/entities/user.entity';
 
 @Entity('vacancy')
+@Index(['userId', 'id_ext', 'source', 'title'])
 export class Vacancy {
 	@PrimaryGeneratedColumn('increment', { type: 'bigint' })
-	/** это внутренний id в таблице */
-	id!: string; // bigint лучше хранить как string в JS/TS
+	/** внутренний id в таблице */
+	id!: string; // bigint как string в JS/TS
+
+	@Column({ type: 'bigint', name: 'user_id' })
+	userId!: string;
+
+	@ManyToOne(() => User, (user) => user.vacancies, { onDelete: 'CASCADE' })
+	@JoinColumn({ name: 'user_id' })
+	user!: User;
 
 	@Column({ type: 'varchar', nullable: false })
 	/** внешний id на источнике */
@@ -30,6 +47,10 @@ export class Vacancy {
 	@Column({ type: 'varchar', nullable: true })
 	/** ключ поискового запроса */
 	search_key?: string;
+
+	@Column({ type: 'varchar', length: 32, default: 'new' })
+	/** pipeline status for "my vacancies" */
+	status!: VacancyStatus;
 
 	@CreateDateColumn({
 		type: 'timestamp',

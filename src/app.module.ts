@@ -4,6 +4,8 @@ import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 import { VacancyModule } from '@/vacancy/vacancy.module';
 import { TelegramModule } from '@/telegram/telegram.module';
+import { AuthModule } from '@/auth/auth.module';
+import { UserModule } from '@/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
@@ -26,6 +28,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 				autoLoadEntities: true, // удобно
 			}),
 		}),
+		UserModule,
+		AuthModule,
 		TelegramModule,
 		VacancyModule,
 	],
