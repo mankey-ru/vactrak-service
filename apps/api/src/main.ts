@@ -15,20 +15,20 @@ async function bootstrap() {
 		.filter(Boolean);
 	const allowedOrigins = new Set([...webOrigins, ...JOB_SITE_ORIGINS]);
 
-	// app.enableCors({
-	// 	// Reflect allowed origins so credentials work. No Origin (curl) is always fine.
-	// 	origin: (origin, callback) => {
-	// 		if (!origin || allowedOrigins.has(origin) || webOrigins.length === 0) {
-	// 			// webOrigins empty → dev: reflect any origin (same as previous `true`)
-	// 			callback(null, true);
-	// 			return;
-	// 		}
-	// 		callback(null, false);
-	// 	},
-	// 	credentials: true,
-	// 	methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-	// 	allowedHeaders: ['Content-Type', 'Authorization'],
-	// });
+	app.enableCors({
+		// Reflect allowed origins so credentials work. No Origin (curl) is always fine.
+		origin: (origin, callback) => {
+			if (!origin || allowedOrigins.has(origin) || webOrigins.length === 0) {
+				// webOrigins empty → dev: reflect any origin (same as previous `true`)
+				callback(null, true);
+				return;
+			}
+			callback(null, false);
+		},
+		credentials: true,
+		methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+		allowedHeaders: ['Content-Type', 'Authorization'],
+	});
 
 	app.useGlobalPipes(
 		new ValidationPipe({
