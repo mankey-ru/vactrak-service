@@ -54,6 +54,30 @@ cp apps/web/.env.example apps/web/.env
 npm run dev:web
 ```
 
+### Database migrations (TypeORM)
+
+Prefer **migrations** over `DB_SYNCHRONIZE` (keep synchronize `false` in prod).
+
+```bash
+# from monorepo root (uses apps/api/.env)
+npm run migration:show    # pending / applied
+npm run migration:run     # apply pending
+npm run migration:revert  # undo last
+
+# after entity changes (rename the generated file):
+npm run migration:generate -w @vactrak/api
+# or:
+cd apps/api && npx ts-node -P tsconfig.typeorm.json -r tsconfig-paths/register \
+  ./node_modules/typeorm/cli.js migration:generate \
+  src/database/migrations/MyChange -d src/database/data-source.ts
+```
+
+On Render, set `DB_MIGRATIONS_RUN=true` so Nest applies pending migrations on boot (`DB_SYNCHRONIZE=false`).
+
+Baseline migration: `apps/api/src/database/migrations/1730000000000-InitAuthAndVacancyOwner.ts`.
+
+If the DB was already created with synchronize, `migration:run` still records the baseline (SQL is IF NOT EXISTS-safe). If TypeORM refuses because of drift, mark baseline applied only after verifying schema, or run SQL manually then `migration:run`.
+
 ### Auth (multi-user)
 
 1. `POST /api/auth/telegram` — Telegram Login Widget payload → JWT.

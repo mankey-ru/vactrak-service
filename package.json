@@ -21,7 +21,11 @@
 		"test:api": "npm run test -w @vactrak/api",
 		"test:e2e": "npm run test:e2e -w @vactrak/api",
 		"lint": "npm run lint -w @vactrak/api --if-present",
-		"db": "docker compose up -d && docker compose logs -f"
+		"db": "docker compose up -d && docker compose logs -f",
+		"migration:run": "npm run migration:run -w @vactrak/api",
+		"migration:revert": "npm run migration:revert -w @vactrak/api",
+		"migration:show": "npm run migration:show -w @vactrak/api",
+		"migration:generate": "npm run migration:generate -w @vactrak/api"
 	},
 	"engines": {
 		"node": ">=20"

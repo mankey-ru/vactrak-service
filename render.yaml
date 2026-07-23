@@ -20,6 +20,8 @@ services:
         value: "20"
       - key: DB_SYNCHRONIZE
         value: "false"
+      - key: DB_MIGRATIONS_RUN
+        value: "true"
       - key: DB_LOGGING
         value: "false"
       - key: JWT_EXPIRES_IN
