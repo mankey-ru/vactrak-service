@@ -1,8 +1,9 @@
-export type VacancyStatus = 'new' | 'archived';
-
-export const VACANCY_STATUSES = ['new', 'archived'] as const satisfies readonly VacancyStatus[];
-
-export type VacancySource = 'hh' | 'habr';
+export {
+	VACANCY_STATUSES,
+	VACANCY_SOURCES,
+	type VacancyStatus,
+	type VacancySource,
+} from '@vactrak/shared';
 
 /** CREATE */
 import type { CreateVacancyDto } from './dto/create-vacancy.dto';

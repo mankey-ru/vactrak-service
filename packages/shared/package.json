@@ -1,0 +1,24 @@
+{
+	"name": "@vactrak/shared",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Shared types and constants for VacTrak API and web",
+	"main": "./dist/index.js",
+	"module": "./dist/esm/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/index.js",
+			"default": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "npx tsc -p tsconfig.cjs.json && npx tsc -p tsconfig.esm.json"
+	},
+	"files": ["dist"],
+	"devDependencies": {
+		"typescript": "^5.7.3"
+	}
+}

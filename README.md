@@ -1,28 +1,87 @@
-# vactrak-service
+# vactrak
 
-Job vacancy tracker service for personal needs.
+Job vacancy tracker — **monorepo** with Nest API, Nuxt SSR web, and shared types.
+
+## Layout
+
+```text
+apps/api          NestJS API (@vactrak/api)
+apps/web          Nuxt 3 SSR UI (@vactrak/web)
+packages/shared   Shared types/constants (@vactrak/shared)
+```
 
 ## The goal
-Nowadays many jobs immediately got many applicants and job sites provide only daily notification subscriptions (email, messengers etc), so you have to sit down and keep pressing F5. The purpose of this project is to make you notificated **immediately** after job was posted. It was made on top of the userscript to avoid problems with authentication, API requests blocking etc.
+
+Many jobs get applicants immediately; job sites only offer daily notifications. This project notifies you **as soon as** a vacancy is posted, on top of a userscript (to avoid site auth / blocking issues).
+
+## Supported sites
+
+- [HeadHunter](https://hh.ru)
+- [Habr Career](https://career.habr.com)
 
 ## Basic usage (client-side only)
-1. Install [Tampermonkey](https://www.tampermonkey.net/) or any userscript extension for your browser.
-1. Install the [userscript](https://github.com/mankey-ru/userscripts#vactrak-vacancy-tracker) (now supports [HeadHunter](https://hh.ru) and [Habr Career](https://career.habr.com)).
+
+1. Install [Tampermonkey](https://www.tampermonkey.net/) (or similar).
+1. Install the [userscript](https://github.com/mankey-ru/userscripts#vactrak-vacancy-tracker).
 1. Open supported job site and search with your exact conditions (note: HH supports [advanced](https://hh.ru/article/25295) [queries](https://hh.ru/article/1175))
-1. Manually add url params:
-    - `&use_vactrak=yes` to enable vactrak userscript
-    - `&vactrak_search_key=YOUR_OPTIONAL_SEARCH_NAME` (optional) to have a convenient label when getting notifications. E.g. `node` and `vue`. Important: use different keys for each search criteria set. 
+1. On a search URL add:
+   - `&use_vactrak=yes` to enable userscript
+   - `&vactrak_search_key=YOUR_OPTIONAL_SEARCH_NAME` (optional) to have a convenient label when getting notifications. Important: use different keys for each search criteria set. E.g. `node` and `vue`.
 
-#### Result
-It reloads the page each ~2m and makes **clickable system notifications** about new vacancies. 
-Just keep the page(s) open. Plus, there are [some teqniques](https://www.google.com/search?q=firefox+prevent+tab+from+sleeping) to prevent tabs from being "slept" in case of lack of RAM.
+The page reloads ~every 2 minutes and shows clickable system notifications for new vacancies.
 
-## Full usage with server-side
-- Deploy service on hosting of your choice. I should support Node.js 20+ and postgres.
-- Set env variables (secrets or .env) for backend: [.env.example](https://github.com/mankey-ru/vactrak-service/blob/main/.env.example)
-- In browser press Ctrl+Shift+I -> Console and set `localStorage.VACTRAK_URL='https://DOMAIN_WHERE_SERVICE_DEPLOYED.com'`
+## Full stack (API + optional web)
 
-#### Result
+### Local
 
-The userscript will send new vacancies to the server side and **you will get immediate TG notifications**. Duplicate jobs will be ignored.
+```bash
+# Postgres
+cp .env.example .env          # compose credentials
+npm run db
 
+# install (workspaces)
+npm ci
+npm run build:shared
+
+# API — copy env and start (port 3000)
+cp apps/api/.env.example apps/api/.env
+# set POSTGRES_*, JWT_SECRET, TELEGRAM_*
+npm run dev:api
+
+# Web SSR (port 3001)
+cp apps/web/.env.example apps/web/.env
+# NUXT_PUBLIC_API_BASE=http://localhost:3000
+npm run dev:web
+```
+
+### Auth (multi-user)
+
+1. `POST /api/auth/telegram` — Telegram Login Widget payload → JWT.
+2. Browser stores JWT in cookie `vactrak_token` (Nuxt SSR).
+3. Userscript: create an API token via `POST /api/auth/tokens` (JWT), send `Authorization: Bearer vt_…` to `POST /api/vac`.
+4. Vacancies are **row-owned** (`user_id`); statuses: `new` | `archived`.
+
+### Deploy (Render + GitHub)
+
+- **CI:** `.github/workflows/ci.yml` — parallel `api` and `web` jobs (after `shared`).
+- **Render:** `render.yaml` defines:
+  - `vactrak-api` — Node web service, root `apps/api`
+  - `vactrak-web` — Node web service (Nuxt SSR), root `apps/web`
+
+Point `NUXT_PUBLIC_API_BASE` at the API URL and `WEB_ORIGIN` at the web URL. Configure Telegram Login domain for the **web** host in BotFather.
+
+Userscript:
+
+```js
+localStorage.VACTRAK_URL = 'https://YOUR_API_HOST'
+// plus Authorization token when required by the userscript
+```
+
+## Scripts (root)
+
+| Script | Purpose |
+|--------|---------|
+| `npm run dev:api` / `dev:web` | Local watch / Nuxt dev |
+| `npm run build:api` / `build:web` | Production builds |
+| `npm test` | API unit tests |
+| `npm run db` | Docker Compose Postgres |

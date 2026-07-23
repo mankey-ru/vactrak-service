@@ -1,0 +1,61 @@
+# Render Blueprint: two independent services, same GitHub monorepo.
+# https://render.com/docs/blueprint-spec
+#
+# Set secrets in the dashboard after first sync:
+# API: POSTGRES_*, TELEGRAM_*, WEB_ORIGIN (Nuxt public URL)
+# Web: NUXT_PUBLIC_API_BASE (API public URL), NUXT_PUBLIC_TELEGRAM_BOT_USERNAME
+
+services:
+  - type: web
+    name: vactrak-api
+    runtime: node
+    plan: free
+    # Full monorepo checkout so npm workspaces resolve @vactrak/shared
+    rootDir: .
+    buildCommand: npm ci && npm run build -w @vactrak/shared && npm run build -w @vactrak/api
+    startCommand: npm run start:prod -w @vactrak/api
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: DB_SYNCHRONIZE
+        value: "false"
+      - key: DB_LOGGING
+        value: "false"
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: WEB_ORIGIN
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      - key: POSTGRES_HOST
+        sync: false
+      - key: POSTGRES_PORT
+        value: "5432"
+      - key: POSTGRES_USER
+        sync: false
+      - key: POSTGRES_PASSWORD
+        sync: false
+      - key: POSTGRES_DB
+        sync: false
+
+  - type: web
+    name: vactrak-web
+    runtime: node
+    plan: free
+    rootDir: .
+    buildCommand: npm ci && npm run build -w @vactrak/shared && npm run build -w @vactrak/web
+    startCommand: npm run start -w @vactrak/web
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: HOST
+        value: "0.0.0.0"
+      - key: NUXT_PUBLIC_API_BASE
+        sync: false
+      - key: NUXT_PUBLIC_TELEGRAM_BOT_USERNAME
+        sync: false
