@@ -1,6 +1,10 @@
 # compiled output
 dist
 **/dist
+# Tampermonkey install/update URLs need the built userscript on main
+!apps/userscript/dist/
+!apps/userscript/dist/**
+apps/userscript/dist-dev/
 node_modules
 **/node_modules
 /build

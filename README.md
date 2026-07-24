@@ -7,6 +7,7 @@ Job vacancy tracker — **monorepo** with Nest API, Nuxt SSR web, and shared typ
 ```text
 apps/api          NestJS API (@vactrak/api)
 apps/web          Nuxt 3 SSR UI (@vactrak/web)
+apps/userscript   Tampermonkey userscript (@vactrak/userscript)
 packages/shared   Shared types/constants (@vactrak/shared)
 ```
 
@@ -22,7 +23,7 @@ Many jobs get applicants immediately; job sites only offer daily notifications. 
 ## Basic usage (client-side only)
 
 1. Install [Tampermonkey](https://www.tampermonkey.net/) (or similar).
-1. Install the [userscript](https://github.com/mankey-ru/userscripts#vactrak-vacancy-tracker).
+1. Install the userscript: open [vactrak.user.js](https://github.com/mankey-ru/vactrak-service/raw/refs/heads/main/apps/userscript/dist/vactrak.user.js) (Tampermonkey should prompt to install). Source: `apps/userscript`. Rebuild after edits with `npm run build:userscript` and commit the updated `dist` so install/update URLs keep working.
 1. Open supported job site and search with your exact conditions (note: HH supports [advanced](https://hh.ru/article/25295) [queries](https://hh.ru/article/1175))
 1. On a search URL add:
    - `&use_vactrak=yes` to enable userscript

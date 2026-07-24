@@ -13,6 +13,7 @@
 		"build:api": "npm run build -w @vactrak/shared && npm run build -w @vactrak/api",
 		"build:web": "npm run build -w @vactrak/shared && npm run build -w @vactrak/web",
 		"build:shared": "npm run build -w @vactrak/shared",
+		"build:userscript": "npm run build -w @vactrak/userscript",
 		"dev:api": "npm run start -w @vactrak/api",
 		"dev:web": "npm run dev -w @vactrak/web",
 		"start:api": "npm run start:prod -w @vactrak/api",
